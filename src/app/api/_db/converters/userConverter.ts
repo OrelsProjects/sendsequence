@@ -1,14 +1,14 @@
 import { FirestoreDataConverter } from "firebase/firestore";
-import User, { UserRole } from "@/models/user";
+import AppUser, { UserRole } from "@/models/user";
 
 /**
  * Firestore data converter for User
  */
-export const userConvereter: FirestoreDataConverter<User> = {
-  toFirestore(chessEvent: User): any {
+export const userConvereter: FirestoreDataConverter<AppUser> = {
+  toFirestore(chessEvent: AppUser): any {
     return chessEvent;
   },
-  fromFirestore(snapshot, options): User {
+  fromFirestore(snapshot, options): AppUser {
     const data = snapshot.data(options);
     return {
       userId: snapshot.id as string,

@@ -2,6 +2,8 @@
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Button } from "../../../../components/ui/button";
+import { ThemeToggle } from "../../../components/theme-toggle";
 
 const Auth = () => {
   const router = useRouter();
@@ -12,7 +14,8 @@ const Auth = () => {
   };
   return (
     <div className="flex flex-col items-center h-screen p-8 text-center">
-      <button onClick={login}>Google</button>
+      <Button onClick={login}>Google</Button>
+      <ThemeToggle />
     </div>
   );
 };

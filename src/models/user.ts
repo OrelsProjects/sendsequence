@@ -1,6 +1,6 @@
 export type UserRole = "user" | "admin";
 
-export interface User {
+export interface AppUser {
   userId: string;
   email: string;
   displayName?: string;
@@ -12,4 +12,4 @@ export interface User {
   role: UserRole;
 }
 
-export default User;
+export default AppUser;
