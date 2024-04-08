@@ -1,5 +1,5 @@
 import { FirestoreDataConverter } from "firebase/firestore";
-import AppUser, { UserRole } from "@/models/user";
+import AppUser, { UserRole } from "@/models/appUser";
 
 /**
  * Firestore data converter for User

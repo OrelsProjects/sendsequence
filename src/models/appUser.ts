@@ -5,11 +5,6 @@ export interface AppUser {
   email: string;
   displayName?: string;
   photoURL?: string;
-  bio?: string;
-  birthDate?: string;
-  gender?: string;
-  token: string;
-  role: UserRole;
 }
 
 export default AppUser;

@@ -1,6 +1,6 @@
 import posthog from "posthog-js";
 import { Logger } from "./logger";
-import AppUser from "./models/user";
+import AppUser from "./models/appUser";
 
 enum TimeoutLength {
   SHORT = 100,
