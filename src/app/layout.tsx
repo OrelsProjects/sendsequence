@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
+import AuthProvider from "./providers/AuthProvider";
+import SessionWrapper from "./providers/SessionWrapper";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,9 +19,17 @@ export default function LocaleLayout({
     <html lang="en">
       <body>
         <StoreProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-          </ThemeProvider>
+          <SessionWrapper>
+            <AuthProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+              >
+                {children}
+              </ThemeProvider>
+            </AuthProvider>
+          </SessionWrapper>
         </StoreProvider>
       </body>
     </html>

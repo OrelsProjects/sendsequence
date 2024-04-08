@@ -1,16 +1,14 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Button } from "../../../../components/ui/button";
 import { ThemeToggle } from "../../../components/theme-toggle";
+import useAuth from "../../../../lib/hooks/useAuth";
 
 const Auth = () => {
-  const router = useRouter();
+  const { signInWithGoogle } = useAuth();
 
   const login = async () => {
-    await signIn("google");
-    router.push("home");
+    await signInWithGoogle();
   };
   return (
     <div className="flex flex-col items-center h-screen p-8 text-center">

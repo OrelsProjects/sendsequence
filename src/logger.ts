@@ -1,5 +1,5 @@
 import { StatusType, datadogLogs } from "@datadog/browser-logs";
-import AppUser from "./models/user";
+import AppUser from "./models/appUser";
 
 interface Dict {
   [key: string]: any;

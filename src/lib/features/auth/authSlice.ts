@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import _ from "lodash";
-import AppUser from "../../../models/user";
+import AppUser from "../../../models/appUser";
 
 export type AuthStateType =
   | "anonymous"
@@ -10,7 +10,7 @@ export type AuthStateType =
   | "registration_required";
 
 export interface AuthState {
-  user: AppUser | null;
+  user?: AppUser | null;
   isAdmin: boolean;
   state: AuthStateType;
   loading: boolean;
@@ -31,7 +31,9 @@ const authSlice = createSlice({
   reducers: {
     setUser: (
       state,
-      action: PayloadAction<(AppUser & { state?: AuthStateType }) | null>,
+      action: PayloadAction<
+        ((AppUser | undefined) & { state?: AuthStateType }) | null | undefined
+      >,
     ) => {
       state.loading = false;
       if (!action.payload) {
@@ -52,6 +54,7 @@ const authSlice = createSlice({
       state.loading = false;
     },
     clearUser: state => {
+      state.loading = false;
       state.user = null;
       state.state = "unauthenticated";
     },
