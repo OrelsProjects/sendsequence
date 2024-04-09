@@ -45,7 +45,6 @@ const authSlice = createSlice({
       if (user && !_.isEqual(state.user, user)) {
         state.user = user;
       }
-      state.isAdmin = action.payload?.role === "admin";
       state.state = action.payload.state ?? "authenticated";
     },
     setError: (state, action: PayloadAction<string | null>) => {
