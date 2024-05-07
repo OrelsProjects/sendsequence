@@ -8,11 +8,10 @@ import {
   setUser as setUserAction,
 } from "../../lib/features/auth/authSlice";
 import { usePathname, useRouter } from "next/navigation";
-import Loading from "@/app/components/ui/loading";
+import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "../../eventTracker";
 import { setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
-import axios from "axios";
 import AppUser from "../../models/appUser";
 import { useAppDispatch } from "../../lib/hooks/redux";
 
@@ -24,20 +23,28 @@ export default function AuthProvider({
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
-  const { loading: loadingAuth, user } = useSelector(selectAuth);
+  const { user: currentUser } = useSelector(selectAuth);
   const { data: session, status } = useSession();
 
   const setUser = async (user?: {
     name?: string | null;
     email?: string | null;
     image?: string | null;
+    userId?: string | null;
+    meta: {
+      referralCode?: string | null;
+    };
   }) => {
     try {
-      let appUser: AppUser | undefined;
-      if (user) {
-        const response = await axios.post<AppUser>("/api/user/confirm", user);
-        appUser = response.data;
-      }
+      const appUser: AppUser = {
+        displayName: user?.name || null,
+        email: user?.email || "",
+        photoURL: user?.image || null,
+        userId: user?.userId || "",
+        meta: {
+          referralCode: user?.meta.referralCode || "",
+        },
+      };
       dispatch(setUserAction(appUser));
     } catch (error: any) {
       console.error(error);
@@ -48,8 +55,8 @@ export default function AuthProvider({
   useEffect(() => {
     switch (status) {
       case "authenticated":
-        debugger;
         setUser(session.user);
+
         break;
       case "loading":
         break;
@@ -62,27 +69,33 @@ export default function AuthProvider({
   }, [status]);
 
   useEffect(() => {
-    setUserEventTracker(user);
-    setUserLogger(user);
-  }, [user]);
+    setUserEventTracker(currentUser);
+    setUserLogger(currentUser);
+  }, [currentUser]);
 
   useEffect(() => {
-    if (loadingAuth) return;
+    if (status === "loading") return;
     if (status === "authenticated") {
-      debugger;
-      router.push("/home");
-      return;
+      if (
+        pathname.includes("login") ||
+        pathname.includes("register") ||
+        pathname === "/" ||
+        pathname === "/home"
+      ) {
+        router.push("/home");
+      }
+    } else {
+      if (!pathname.includes("login") && !pathname.includes("register")) {
+        router.push("/");
+      }
     }
-    if (pathname.includes("auth") && pathname.includes("register")) {
-      router.push("/auth");
-    }
-  }, [status, loadingAuth]);
-  if (loadingAuth) {
+  }, [status]);
+  if (status === "loading") {
     return (
       <div className="w-screen h-screen flex items-center justify-center">
         <Loading className="w-20 h-20" />
       </div>
     );
   }
-  return <div>{children}</div>;
+  return children;
 }
