@@ -1,10 +1,12 @@
-export type UserRole = "user" | "admin";
 
-export interface AppUser {
+export default interface AppUser {
   userId: string;
   email: string;
-  displayName?: string;
-  photoURL?: string;
+  displayName?: string | null;
+  photoURL?: string | null;
+  meta?: AppUserMetadata;
 }
 
-export default AppUser;
+export interface AppUserMetadata {
+  referralCode: string;
+}
