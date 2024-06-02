@@ -41,6 +41,9 @@ export default function AuthProvider({
         email: user?.email || "",
         photoURL: user?.image || null,
         userId: user?.userId || "",
+        settings: {
+          showNotifications: true,
+        },
         meta: {
           referralCode: user?.meta.referralCode || "",
         },

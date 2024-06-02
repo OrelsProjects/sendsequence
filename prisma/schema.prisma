@@ -21,7 +21,8 @@ model AppUser {
   displayName String?
   photoURL    String?
 
-  meta AppUserMetadata?
+  meta            AppUserMetadata?
+  settings AppUserSettings?
 
   @@map("appUser")
 }
@@ -31,9 +32,22 @@ model AppUserMetadata {
   userId            String  @unique
   referralCode      String?
   referredBy        String?
-  pushToken         String?
+
+  pushToken       String?
+  pushTokenMobile String?
 
   appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@map("appUserMetadata")
+}
+
+model AppUserSettings {
+  appUserSettingsId String @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String @unique
+
+  showNotifications Boolean @default(true)
+
+  appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("appUserSettings")
 }

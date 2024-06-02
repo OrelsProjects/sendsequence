@@ -10,11 +10,10 @@ import { v4 as uuidv4 } from "uuid";
 import { InvalidCredentialsError } from "./models/errors/InvalidCredentialsError";
 import { UnknownUserError } from "./models/errors/UnknownUserError";
 import UserAlreadyExistsError from "./models/errors/UserAlreadyExistsError";
-import { generateReferalCode } from "@/app/api/_utils/referralCode";
+import { generateReferalCode } from "./app/api/_utils/referralCode";
 import { cookies } from "next/headers";
 import loggerServer from "./loggerServer";
 import { ReferralOptions } from "global";
-import { AppUser, AppUserMetadata } from "@prisma/client";
 
 const getReferralOptions = (): ReferralOptions => {
   const referralCode = cookies().get("referralCode")?.value;
@@ -29,79 +28,11 @@ const clearReferralCode = () => {
   });
 };
 
-const getUserFromDB = async (
-  userId: string,
-): Promise<(AppUser & { meta: AppUserMetadata | null }) | null> => {
-  const user = await prisma.appUser.findFirst({
-    where: {
-      userId,
-    },
-    include: {
-      meta: true,
-    },
-  });
-  return user;
-};
-
-const setReferralCode = async (session: Session, userId: string) => {
-  if (!session.user.meta.referralCode) {
-    try {
-      const referralCode = generateReferalCode(session.user.userId);
-      await prisma.appUserMetadata.update({
-        where: {
-          userId,
-        },
-        data: {
-          referralCode,
-        },
-      });
-      session.user.meta.referralCode = referralCode;
-    } catch (e: any) {
-      loggerServer.error("Error updating referral code", session.user.userId, {
-        error: e,
-      });
-    }
-  }
-};
-
-const updateUserData = async (
-  session: Session,
-  user: (AppUser & { meta: AppUserMetadata | null }) | null,
-) => {
-  if (session?.user && user) {
-    if (session?.user.image !== user?.photoURL) {
-      await prisma.appUser.update({
-        where: {
-          userId: user.userId,
-        },
-        data: {
-          photoURL: session.user.image,
-        },
-      });
-    }
-
-    if (!session.user.meta) {
-      session.user.meta = {
-        referralCode: "",
-        pushToken: "",
-      };
-    }
-    session.user.userId = user.userId;
-    session.user.meta = {
-      referralCode: user?.meta?.referralCode || "",
-      pushToken: user?.meta?.pushToken || "",
-    };
-  }
-};
-
 export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_AUTH_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET as string,
-      httpOptions: {
-        timeout: 40000,
-      },
     }),
     AppleProvider({
       clientId: process.env.APPLE_ID as string,
@@ -203,10 +134,64 @@ export const authOptions: AuthOptions = {
       token: JWT;
       user: AdapterUser;
     }) {
-      let userInDB = await getUserFromDB(token.sub!);
-      updateUserData(session, userInDB);
-      setReferralCode(session, token.sub!);
+      let userInDB = await prisma.appUser.findFirst({
+        where: {
+          userId: token.sub,
+        },
+        include: {
+          meta: true,
+          settings: true,
+        },
+      });
+      if (session?.user) {
+        if (session?.user.image !== userInDB?.photoURL) {
+          await prisma.appUser.update({
+            where: {
+              userId: token.sub,
+            },
+            data: {
+              photoURL: session.user.image,
+            },
+          });
+        }
 
+        if (!session.user.meta) {
+          session.user.meta = {
+            referralCode: "",
+            pushToken: "",
+          };
+        }
+        session.user.userId = token.sub!;
+        session.user.meta = {
+          referralCode: userInDB?.meta?.referralCode || "",
+        };
+        session.user.settings = userInDB?.settings || {
+          showNotifications: true,
+        };
+      }
+
+      if (!session.user.meta.referralCode) {
+        try {
+          const referralCode = generateReferalCode(session.user.userId);
+          await prisma.appUserMetadata.update({
+            where: {
+              userId: token.sub,
+            },
+            data: {
+              referralCode,
+            },
+          });
+          session.user.meta.referralCode = referralCode;
+        } catch (e: any) {
+          loggerServer.error(
+            "Error updating referral code",
+            session.user.userId,
+            {
+              error: e,
+            },
+          );
+        }
+      }
       return session;
     },
     async signIn(session: any) {
@@ -220,7 +205,9 @@ export const authOptions: AuthOptions = {
             meta: true,
           },
         });
+
         if (!userInDB) {
+          const referralOptions: ReferralOptions = getReferralOptions();
           const newUser = await prisma.appUser.create({
             data: {
               userId: session.user.id,
@@ -229,23 +216,18 @@ export const authOptions: AuthOptions = {
               displayName: session.user.name || "",
               meta: {
                 create: {
-                  referralCode: "",
-                  pushToken: "",
+                  referredBy: referralOptions.referralCode,
+                  referralCode: generateReferalCode(session.user.id),
+                },
+              },
+              settings: {
+                create: {
+                  showNotifications: true,
                 },
               },
             },
           });
-          const referralOptions: ReferralOptions = getReferralOptions();
-          const appUserMetadata = await prisma.appUserMetadata.create({
-            data: {
-              userId: newUser.id,
-              referredBy: referralOptions.referralCode,
-              referralCode: generateReferalCode(newUser.id),
-            },
-          });
-          additionalUserData = {
-            meta: appUserMetadata,
-          };
+          additionalUserData = { ...newUser };
         }
 
         return {

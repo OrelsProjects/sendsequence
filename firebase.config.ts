@@ -3,6 +3,7 @@
 import firebase from "firebase/compat/app";
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { Messaging, getMessaging, getToken } from "firebase/messaging";
+import { canUseNotifications } from "./src/lib/utils/notificationUtils";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -17,11 +18,23 @@ const firebaseConfig = {
 let app: FirebaseApp | null =
   firebase.apps.length > 0 ? firebase.apps?.[0] : null;
 let messaging: Messaging | null = null;
+
 if (typeof window !== "undefined") {
-  // Ensures this runs only in client-side
   app = !firebase.apps.length ? initializeApp(firebaseConfig) : firebase.app();
-  messaging = getMessaging(app);
 }
+// If notifications are enabled, initialize messaging
+if (app) {
+  if (canUseNotifications()) {
+    if (Notification.permission === "granted") {
+      messaging = getMessaging(app);
+    }
+  }
+}
+
+const initMessaging = () => {
+  if (!app || messaging) return;
+  messaging = getMessaging(app);
+};
 
 const getUserToken = async () => {
   if (!messaging) return;
@@ -30,9 +43,10 @@ const getUserToken = async () => {
       vapidKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
     });
     return token;
-  } catch (error) {
+  } catch (error: any) {
     console.error("An error occurred while retrieving token. ", error);
+    return "an error: " + error.message;
   }
 };
 
-export { app, messaging, getUserToken };
+export { app, messaging, initMessaging, getUserToken };
