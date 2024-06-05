@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../../authOptions";
+import { authOptions } from "../../../auth/authOptions";
 import AppUser from "../../../models/appUser";
 import prisma from "../_db/db";
 import Logger from "../../../loggerServer";

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Logger from "../../../loggerServer";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../../authOptions";
+import { authOptions } from "../../../auth/authOptions";
 import prisma from "../_db/db";
 import { messaging } from "../../../../firebase.config.admin";
 import { NotificationData } from "../../../models/notification";
