@@ -1,13 +1,17 @@
+"use client";
+
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
-import React from "react";
+import React, { useEffect } from "react";
 import AuthProvider from "./providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import TopLoaderProvider from "./providers/TopLoaderProvider";
+import { initLogger } from "../logger";
+import { initEventTracker } from "../eventTracker";
 
 const APP_NAME = "Saas template";
 const APP_DEFAULT_TITLE = "Saas template";
@@ -54,6 +58,11 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: RootLayoutProps) {
+  useEffect(() => {
+    initLogger();
+    initEventTracker();
+  }, []);
+  
   return (
     <html lang="en" className="font-montserrat">
       <head>

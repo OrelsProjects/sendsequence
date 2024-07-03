@@ -16,7 +16,6 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     --primary: 221.2 83.2% 53.3%;
-    --primary-lighter: 221.2 100% 66.69%;
     --primary-foreground: 355.7 100% 97.3%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
@@ -30,9 +29,6 @@
     --input: 240 4% 82%;
     --ring: 240 4% 64%;
     --radius: 0.75rem;
-
-    --contracts-in-row: 2;
-    --contracts-in-row-mobile: 1;
   }
 
   .dark {
