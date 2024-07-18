@@ -23,6 +23,7 @@ model AppUser {
 
   meta     AppUserMetadata?
   settings AppUserSettings?
+  Orders   UserOrders[]
 
   @@map("appUser")
 }
@@ -58,5 +59,24 @@ model CartItems {
   currency String
   price    Float
 
+  Orders UserOrders[]
+
   @@map("cartItems")
+}
+
+model UserOrders {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId    String   @unique
+  userId     String
+  cartItemId String   @db.ObjectId
+  quantity   Int
+  total      Float
+  status     String   @default("pending") // pending, completed, cancelled
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  appUser  AppUser   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  cartItem CartItems @relation(fields: [cartItemId], references: [id], onDelete: Cascade)
+
+  @@map("userOrders")
 }

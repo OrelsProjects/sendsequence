@@ -29,9 +29,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
     }
 
-    const order = await createOrder({
+    const order: { id: string; status: string } = await createOrder({
       currency: item.currency,
       value,
+    });
+
+    await prisma.userOrders.create({
+      data: {
+        userId: session.user.userId,
+        orderId: order.id,
+        quantity: parseInt(cart.amount),
+        cartItemId: cart.itemId,
+        total: value,
+        status: order.status,
+      },
     });
 
     return NextResponse.json(order, { status: 200 });

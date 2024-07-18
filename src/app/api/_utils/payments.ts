@@ -59,3 +59,26 @@ export const createOrder = async (item: {
 
   return response.data;
 };
+
+export const captureOrder = async (orderID: string) => {
+  const accessToken = await generateAccessToken();
+  const url = `${PAYPAL_BASE_URL}/v2/checkout/orders/${orderID}/capture`;
+
+  const response = await axios.post(
+    url,
+    {},
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+        // Uncomment one of these to force an error for negative testing (in sandbox mode only). Documentation:
+        // https://developer.paypal.com/tools/sandbox/negative-testing/request-headers/
+        // "PayPal-Mock-Response": '{"mock_application_codes": "INSTRUMENT_DECLINED"}'
+        // "PayPal-Mock-Response": '{"mock_application_codes": "TRANSACTION_REFUSED"}'
+        // "PayPal-Mock-Response": '{"mock_application_codes": "INTERNAL_SERVER_ERROR"}'
+      },
+    },
+  );
+
+  return response.data;
+};
