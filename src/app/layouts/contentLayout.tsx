@@ -10,6 +10,7 @@ import TopLoaderProvider from "../providers/TopLoaderProvider";
 import AnimationProvider from "../providers/AnimationProvider";
 import HeightProvider from "../providers/HeightProvider";
 import ContentProvider from "../providers/ContentProvider";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -20,12 +21,21 @@ export default function ContentLayout({ children }: RootLayoutProps) {
     <main>
       <AuthProvider>
         <NotificationsProvider />
-          <HeightProvider>
-            <ContentProvider>
-              <TopLoaderProvider />
+        <HeightProvider>
+          <ContentProvider>
+            <TopLoaderProvider />
+            <PayPalScriptProvider
+              options={{
+                clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID as string,
+                currency: "USD",
+                enableFunding: "card,ideal",
+                components: "googlepay,buttons",
+              }}
+            >
               <AnimationProvider>{children}</AnimationProvider>
-            </ContentProvider>
-          </HeightProvider>
+            </PayPalScriptProvider>
+          </ContentProvider>
+        </HeightProvider>
       </AuthProvider>
     </main>
   );

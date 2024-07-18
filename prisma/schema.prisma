@@ -21,7 +21,7 @@ model AppUser {
   displayName String?
   photoURL    String?
 
-  meta            AppUserMetadata?
+  meta     AppUserMetadata?
   settings AppUserSettings?
 
   @@map("appUser")
@@ -50,4 +50,13 @@ model AppUserSettings {
   appUser AppUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@map("appUserSettings")
+}
+
+model CartItems {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  currency String
+  price    Float
+
+  @@map("cartItems")
 }
