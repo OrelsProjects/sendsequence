@@ -61,7 +61,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       data: {
         title,
         body: body || "",
-        icon: process.env.LOGO_URL || "/notification-icon.png",
+        icon: process.env.NOTIFICATION_LOGO_URL || "/notification-icon.png",
         badge: "/notification-icon.png",
         image: image || "",
       },
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<any>> {
       },
       android: {
         notification: {
-          icon: process.env.LOGO_URL || "",
+          icon: process.env.NOTIFICATION_LOGO_URL || "",
           channelId: type,
           tag: type,
         },
