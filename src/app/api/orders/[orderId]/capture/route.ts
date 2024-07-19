@@ -16,20 +16,22 @@ export async function POST(
   try {
     const { orderId } = params;
 
-    const captureResponse: { id: string; status: string } =
-      await captureOrder(orderId);
+    const captureResponse = await captureOrder(orderId);
+    const isCaptureSuccessful = !captureResponse?.details?.[0]?.issue;
 
-    await prisma.userOrders.update({
-      where: {
-        orderId,
-      },
-      data: {
-        status: captureResponse.status,
-      },
-    });
+    if (isCaptureSuccessful) {
+      await prisma.userOrders.update({
+        where: {
+          orderId,
+        },
+        data: {
+          status: captureResponse.status,
+        },
+      });
 
-    // RUN YOUR LOGIC HERE TO ADD THE ORDER TO YOUR DATABASE. MAYBE TOKENS OR SOMETHING.
-
+      // THE DEAL WAS COMPLETED. RUN YOUR LOGIC HERE.
+    }
+    
     return NextResponse.json(captureResponse, { status: 200 });
   } catch (error) {
     Logger.error("Error sending notification", session.user.userId, {
