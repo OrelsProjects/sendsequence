@@ -1,13 +1,19 @@
 "use client";
 
 import { PayPalButtons } from "@paypal/react-paypal-js";
-import React from "react";
+import React, { useEffect } from "react";
 import usePayments from "@/lib/hooks/usePayments";
 import { PayPalCapture } from "../../../models/payment";
+import { toast } from "react-toastify";
 
 export default function PaymentPage() {
   const [error, setError] = React.useState<string | null>(null);
   const { approveOrder, cancelOrder, createOrder } = usePayments();
+
+  /* Write your own logic for handling errors */
+  useEffect(() => {
+    toast.error(error);
+  }, [error]);
 
   const handleApproveOrder = async (
     data: any,
