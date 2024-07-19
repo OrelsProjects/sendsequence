@@ -50,7 +50,7 @@ export default function PaymentPage() {
           height: 40,
         }}
         createOrder={async () => {
-          return handleCreate();
+          return await handleCreate();
         }}
         onApprove={async (data, actions) => {
           const orderData = await approveOrder(data.orderID);
