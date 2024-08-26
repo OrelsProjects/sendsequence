@@ -7,20 +7,21 @@ import {
   selectAuth,
   setUser as setUserAction,
 } from "../../lib/features/auth/authSlice";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Loading from "@/components/ui/loading";
 import { setUserEventTracker } from "../../eventTracker";
 import { setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
 import AppUser from "../../models/appUser";
 import { useAppDispatch } from "../../lib/hooks/redux";
+import { useCustomRouter } from "../../lib/hooks/useCustomRouter";
 
 export default function AuthProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
+  const router = useCustomRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { user: currentUser } = useSelector(selectAuth);
@@ -59,7 +60,6 @@ export default function AuthProvider({
     switch (status) {
       case "authenticated":
         setUser(session.user);
-
         break;
       case "loading":
         break;

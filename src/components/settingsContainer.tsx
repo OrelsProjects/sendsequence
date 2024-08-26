@@ -1,7 +1,7 @@
 import React from "react";
-import Link from "next/link";
 import { useAppSelector } from "../lib/hooks/redux";
 import { UserAvatar } from "./ui/avatar";
+import CustomLink from "./CustomLink";
 
 interface SettingsComponentProps {}
 
@@ -11,7 +11,7 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
   return (
     state === "authenticated" && (
       <div className="p-2 rounded-lg w-full flex flex-col items-end">
-        <Link href="/settings" className="w-fit h-fit">
+        <CustomLink href="/settings" className="w-fit h-fit">
           <UserAvatar
             photoURL={user?.photoURL || "/images/default-profile.png"}
             displayName={user?.displayName}
@@ -19,7 +19,7 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
             className="w-12 h-12 md:hover:shadow-lg md:hover:cursor-pointer rounded-full"
             hideTooltip
           />
-        </Link>
+        </CustomLink>
       </div>
     )
   );

@@ -1,18 +1,19 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../lib/hooks/redux";
-import { Button } from "../../../components/ui/button";
-import useAuth from "../../../lib/hooks/useAuth";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
+import { Button } from "@/components/ui/button";
+import useAuth from "@/lib/hooks/useAuth";
 import { toast } from "react-toastify";
-import { EventTracker } from "../../../eventTracker";
-import { Switch } from "../../../components/ui/switch";
+import { EventTracker } from "@/eventTracker";
+import { Switch } from "@/components/ui/switch";
 import axios from "axios";
-import { canUseNotifications } from "../../../lib/utils/notificationUtils";
-import useNotification from "../../../lib/hooks/useNotification";
-import { updateUserSettings } from "../../../lib/features/auth/authSlice";
-import { ThemeToggle } from "../../../components/themeToggle";
-import Divider from "../../../components/ui/divider";
+import { canUseNotifications } from "@/lib/utils/notificationUtils";
+import useNotification from "@/lib/hooks/useNotification";
+import { updateUserSettings } from "@/lib/features/auth/authSlice";
+import { ThemeToggle } from "@/components/themeToggle";
+import Divider from "@/components/ui/divider";
+import CustomLink from "@/components/CustomLink";
 
 interface SettingsProps {}
 
@@ -154,6 +155,27 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
             </Button>
           </div>
         </div>
+      </div>
+      <div className="w-full flex flex-row justify-center items-center gap-1 text-xs text-foreground font-light">
+        {/* Bulleted list: By Orel , <a>privacy<a>, <a>terms of service<a> */}
+        <strong>By Orel</strong> •
+        <CustomLink
+          href="/privacy"
+          className="text-sky-600 underline dark:text-sky-400/70"
+          target="_blank"
+          about="Privacy"
+        >
+          Privacy
+        </CustomLink>
+        •
+        <CustomLink
+          href="/tos"
+          className="text-sky-600 underline dark:text-sky-400/70"
+          target="_blank"
+          about="Terms of Service"
+        >
+          Terms of Service
+        </CustomLink>
       </div>
     </div>
   );

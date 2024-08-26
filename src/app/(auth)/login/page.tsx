@@ -3,7 +3,7 @@
 import GoogleLogin from "../../../components/auth/googleLogin";
 import AppleLogin from "../../../components/auth/appleLogin";
 import { Button } from "../../../components/ui/button";
-import Link from "next/link";
+import CustomLink from "../../../components/CustomLink";
 
 const Auth = () => {
   return (
@@ -23,7 +23,7 @@ const Auth = () => {
           className="text-base underline text-muted-foreground !p-0"
           asChild
         >
-          <Link href="/register">Sign up</Link>
+          <CustomLink href="/register">Sign up</CustomLink>
         </Button>
       </div>
     </div>

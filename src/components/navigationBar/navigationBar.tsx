@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { NavigationBarItem, BottomBarItems } from "./_consts";
 import { cn } from "../../lib/utils";
-import Link from "next/link";
+import CustomLink from "../CustomLink";
 
 interface NavigationBar {
   ref?: React.RefObject<HTMLDivElement>;
@@ -27,7 +27,7 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
     item.href === activeItem?.href;
 
   const Item = ({ item, id }: { item: NavigationBarItem; id: string }) => (
-    <Link
+    <CustomLink
       href={item.href}
       className={cn(
         "flex-1 flex items-center justify-center lg:justify-start lg:hover:bg-muted-foreground/20  lg:rounded-lg lg:p-4 cursor-pointer",
@@ -50,7 +50,7 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
           {item.label}
         </span>
       </div>
-    </Link>
+    </CustomLink>
   );
 
   const SideNavigationBar = () => (
