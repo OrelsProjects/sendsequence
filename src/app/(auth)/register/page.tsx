@@ -3,7 +3,7 @@
 import GoogleLogin from "../../../components/auth/googleLogin";
 import AppleLogin from "../../../components/auth/appleLogin";
 import { Button } from "../../../components/ui/button";
-import CustomLink from "../../../components/CustomLink";
+import CustomLink from "../../../components/customLink";
 
 const RegisterPage = () => {
   return (
@@ -21,7 +21,9 @@ const RegisterPage = () => {
           className="text-base underline text-muted-foreground !p-0"
           asChild
         >
-          <CustomLink href="/login">Login</CustomLink>
+          <CustomLink href="/login" preserveQuery>
+            Login
+          </CustomLink>
         </Button>
       </div>
     </div>

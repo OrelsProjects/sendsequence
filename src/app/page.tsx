@@ -6,7 +6,7 @@ import { useCustomRouter } from "../lib/hooks/useCustomRouter";
 export default function Home() {
   const router = useCustomRouter();
   useEffect(() => {
-    router.push("/login");
+    router.push("/login", { preserveQuery: true });
   }, []);
 
   return (

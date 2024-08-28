@@ -1,10 +1,14 @@
 import { ElementType } from "react";
 import { GoHomeFill as HomeActive, GoHome as Home } from "react-icons/go";
+import {
+  MdOutlinePayments as Payments,
+  MdPayment as PaymentsActive,
+} from "react-icons/md";
 
 export interface NavigationBarItem {
   icon: ElementType;
   iconActive: ElementType;
-  label: "Home";
+  label: "Home" | "Payment";
   href: string;
 }
 
@@ -17,5 +21,11 @@ export const BottomBarItems: NavigationBarItem[] = [
     iconActive: () => <HomeActive className={classNameActive} />,
     label: "Home",
     href: "/home",
+  },
+  {
+    icon: () => <Payments className={className} />,
+    iconActive: () => <PaymentsActive className={classNameActive} />,
+    label: "Payment",
+    href: "/payment",
   },
 ];

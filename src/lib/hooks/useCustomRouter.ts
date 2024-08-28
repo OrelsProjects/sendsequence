@@ -14,15 +14,13 @@ export function useCustomRouter() {
     routerOptions?: CustomRouterOptions,
     options?: NavigateOptions,
   ) => {
-    debugger;
     // HACK: If relative URL given, stick the current host on the string passed to URL()
     // as the constructor throws an error if URL without a host is given
     const url = new URL(
       href.includes("http") ? href : window.location.host + href,
     );
 
-    // Force preserve Query
-    if (routerOptions?.preserveQuery || true) {
+    if (routerOptions?.preserveQuery) {
       searchParams.forEach((val, key) => {
         url.searchParams.append(key, val);
       });

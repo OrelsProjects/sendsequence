@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { NavigationBarItem, BottomBarItems } from "./_consts";
 import { cn } from "../../lib/utils";
-import CustomLink from "../CustomLink";
+import CustomLink from "../customLink";
 
 interface NavigationBar {
   ref?: React.RefObject<HTMLDivElement>;
@@ -38,6 +38,7 @@ const NavigationBar: React.FC<NavigationBar> = ({ ...props }) => {
       key={item.href}
       // data-onboarding-id={`navigation-bar-item-${item.label}`}
       data-onboarding-id={id}
+      preserveQuery
     >
       <div className="flex flex-col lg:flex-row gap-2 justify-center items-center">
         <span className="indicator">

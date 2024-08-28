@@ -1,11 +1,25 @@
+export interface PayPalLink {
+  href: string;
+  rel: string;
+  method: string;
+}
+
+export interface PayPalSubscription {
+  links: PayPalLink[];
+  plans: PayPalSubscriptionPlan[];
+}
+
+export interface PayPalSubscriptionPlan extends PayPalCreate {
+  name: string;
+  description?: string;
+  create_time: string;
+  usage_type: "LICENSED" | "UNLIMITED";
+}
+
 export interface PayPalCreate {
   id: string;
   status: string;
-  links: {
-    href: string;
-    rel: string;
-    method: string;
-  }[];
+  links: PayPalLink[];
 }
 
 export interface PayPalCapture {
@@ -106,4 +120,159 @@ export interface PayPalCapture {
     rel: string;
     method: string;
   }[];
+}
+
+export interface BillingCycle {
+  frequency: {
+    interval_unit: "MONTH" | "YEAR";
+    interval_count: number;
+  };
+  tenure_type: "REGULAR" | "TRIAL";
+  sequence: number;
+  total_cycles: number;
+  pricing_scheme?: {
+    fixed_price: {
+      value: string;
+      currency_code: "USD" | "ILS";
+    };
+  };
+}
+
+export interface PaymentPreferences {
+  auto_bill_outstanding: boolean;
+  setup_fee?: {
+    value: string;
+    currency_code: "USD" | "ILS";
+  };
+  setup_fee_failure_action?: string;
+  payment_failure_threshold: number;
+}
+
+export interface Taxes {
+  percentage: string;
+  inclusive: boolean;
+}
+
+export interface CreateSubscriptionPlan {
+  taxes: Taxes;
+  name: string;
+  product_id: string;
+  description: string;
+  billing_cycles: BillingCycle[];
+  payment_preferences: PaymentPreferences;
+}
+
+export interface PayPalEventResponse {
+  id: string;
+  create_time: "subscription" | string;
+  resource_type: string;
+  event_type: string;
+  summary: string;
+  resource: PayPalSubscriptionResource;
+  links: PayPalLink[];
+  event_version: string;
+  resource_version: string;
+}
+
+export interface PayPalSubscriptionResource {
+  quantity: string;
+  subscriber: PayPalSubscriber;
+  create_time: string;
+  shipping_amount: {
+    currency_code: string;
+    value: string;
+  };
+  start_time: string;
+  update_time: string;
+  billing_info: BillingInfo;
+  links: PayPalLink[];
+  id: string;
+  plan_id: string;
+  auto_renewal: boolean;
+  status: string;
+  status_update_time: string;
+}
+
+export interface PayPalSubscriber {
+  name: {
+    given_name: string;
+    surname: string;
+  };
+  email_address: string;
+  shipping_address: {
+    name: {
+      full_name: string;
+    };
+    address: {
+      address_line_1: string;
+      address_line_2?: string;
+      admin_area_2: string;
+      admin_area_1: string;
+      postal_code: string;
+      country_code: string;
+    };
+  };
+}
+
+export interface BillingInfo {
+  outstanding_balance: {
+    currency_code: string;
+    value: string;
+  };
+  cycle_executions: CycleExecution[];
+  last_payment: PaymentDetail; // Last payment made
+  next_billing_time: string;
+  final_payment_time: string; // Time of the final payment
+  failed_payments_count: number; 
+}
+
+export interface CycleExecution {
+  tenure_type: "TRIAL" | "REGULAR";
+  sequence: number;
+  cycles_completed: number;
+  cycles_remaining: number;
+  current_pricing_scheme_version: number;
+}
+
+export interface PaymentDetail {
+  amount: {
+    currency_code: string;
+    value: string;
+  };
+  time: string;
+}
+
+export interface PayPalSaleCompletedEvent {
+  id: string;
+  event_version: string;
+  create_time: string;
+  resource_type: string;
+  event_type: string;
+  summary: string;
+  resource: PayPalSaleResource;
+  links: PayPalLink[];
+}
+
+export interface PayPalSaleResource {
+  billing_agreement_id: string;
+  amount: {
+    total: string;
+    currency: string;
+    details: {
+      subtotal: string;
+    };
+  };
+  payment_mode: string;
+  update_time: string;
+  create_time: string;
+  protection_eligibility_type: string;
+  transaction_fee: {
+    currency: string;
+    value: string;
+  };
+  protection_eligibility: string;
+  links: PayPalLink[];
+  id: string;
+  state: string;
+  invoice_number: string;
 }

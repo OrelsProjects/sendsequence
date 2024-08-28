@@ -13,7 +13,7 @@ import useNotification from "@/lib/hooks/useNotification";
 import { updateUserSettings } from "@/lib/features/auth/authSlice";
 import { ThemeToggle } from "@/components/themeToggle";
 import Divider from "@/components/ui/divider";
-import CustomLink from "@/components/CustomLink";
+import CustomLink from "@/components/customLink";
 
 interface SettingsProps {}
 

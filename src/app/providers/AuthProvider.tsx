@@ -85,11 +85,11 @@ export default function AuthProvider({
         pathname === "/" ||
         pathname === "/home"
       ) {
-        router.push("/home");
+        router.push("/home", { preserveQuery: true });
       }
     } else {
       if (!pathname.includes("login") && !pathname.includes("register")) {
-        router.push("/");
+        router.push("/", { preserveQuery: true });
       }
     }
   }, [status]);

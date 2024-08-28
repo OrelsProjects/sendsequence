@@ -1,8 +1,10 @@
 import axios from "axios";
-import prisma from "../_db/db";
-import { PayPalCreate } from "../../../models/payment";
-
-type OrderId = string;
+import {
+  CreateSubscriptionPlan,
+  PayPalCapture,
+  PayPalCreate,
+  PayPalSubscription,
+} from "@/models/payment";
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID as string;
 const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_SECRET as string;
@@ -31,6 +33,89 @@ const generateAccessToken = async () => {
     console.error("Failed to generate Access Token:", error);
     throw error;
   }
+};
+
+export const getOrder = async (orderId: string): Promise<PayPalCreate> => {
+  const accessToken = await generateAccessToken();
+  const url = `${PAYPAL_BASE_URL}/v2/checkout/orders/${orderId}`;
+
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response.data;
+};
+
+export const createSubscriptionPlan = async (
+  item: CreateSubscriptionPlan,
+): Promise<PayPalCreate> => {
+  const accessToken = await generateAccessToken();
+  const url = `${PAYPAL_BASE_URL}/v2/billing/plans`;
+
+  const payload = {
+    product_id: item.product_id,
+    name: item.name,
+    description: item.description,
+    billing_cycles: item.billing_cycles,
+    payment_preferences: item.payment_preferences,
+    taxes: item.taxes,
+  };
+
+  const response = await axios.post<PayPalCreate>(url, payload, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response.data;
+};
+
+export const listSubscriptionPlans = async (): Promise<PayPalSubscription> => {
+  const accessToken = await generateAccessToken();
+  const url = `${PAYPAL_BASE_URL}/v1/billing/plans?sort_by=create_time&sort_order=desc`;
+
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Prefer: "return=representation",
+    },
+  });
+
+  return response.data;
+};
+
+export const createSubscription = async (item: {
+  name: string;
+  description?: string;
+  type: "fixed" | "infinite";
+  imageUrl?: string;
+  homeUrl?: string;
+}): Promise<PayPalCreate> => {
+  const accessToken = await generateAccessToken();
+  const url = `${PAYPAL_BASE_URL}/v1/catalogs/products`;
+
+  const payload = {
+    name: item.name,
+    description: item.description,
+    type: item.type,
+    category: "SOFTWARE",
+    image_url: item.imageUrl,
+    home_url: item.homeUrl,
+  };
+  const response = await axios.post<PayPalCreate>(url, payload, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response.data;
 };
 
 export const createOrder = async (item: {

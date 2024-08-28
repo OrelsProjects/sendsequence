@@ -6,6 +6,7 @@ export interface CustomLinkProps {
   href?: string;
   rel?: string;
   target?: string;
+  about?: string;
   className?: string;
   onClick?: () => void;
   preserveQuery?: boolean;

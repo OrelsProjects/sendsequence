@@ -27,9 +27,10 @@ export default function ContentLayout({ children }: RootLayoutProps) {
             <PayPalScriptProvider
               options={{
                 clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID as string,
-                currency: "USD",
-                enableFunding: "card,ideal",
-                components: "googlepay,buttons",
+                vault: true, // Enable vault to store payment details
+                // currency: "USD",
+                // enableFunding: "card,ideal",
+                // components: "googlepay,buttons",
               }}
             >
               <AnimationProvider>{children}</AnimationProvider>

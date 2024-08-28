@@ -1,7 +1,7 @@
 import React from "react";
 import { useAppSelector } from "../lib/hooks/redux";
 import { UserAvatar } from "./ui/avatar";
-import CustomLink from "./CustomLink";
+import CustomLink from "./customLink";
 
 interface SettingsComponentProps {}
 
@@ -11,7 +11,7 @@ const SettingsComponent: React.FC<SettingsComponentProps> = () => {
   return (
     state === "authenticated" && (
       <div className="p-2 rounded-lg w-full flex flex-col items-end">
-        <CustomLink href="/settings" className="w-fit h-fit">
+        <CustomLink href="/settings" className="w-fit h-fit" preserveQuery>
           <UserAvatar
             photoURL={user?.photoURL || "/images/default-profile.png"}
             displayName={user?.displayName}

@@ -1,9 +1,9 @@
 "use client";
 
-import GoogleLogin from "../../../components/auth/googleLogin";
-import AppleLogin from "../../../components/auth/appleLogin";
-import { Button } from "../../../components/ui/button";
-import CustomLink from "../../../components/CustomLink";
+import GoogleLogin from "@/components/auth/googleLogin";
+import AppleLogin from "@/components/auth/appleLogin";
+import { Button } from "@/components/ui/button";
+import CustomLink from "@/components/customLink";
 
 const Auth = () => {
   return (
@@ -23,7 +23,9 @@ const Auth = () => {
           className="text-base underline text-muted-foreground !p-0"
           asChild
         >
-          <CustomLink href="/register">Sign up</CustomLink>
+          <CustomLink href="/register" preserveQuery>
+            Sign up
+          </CustomLink>
         </Button>
       </div>
     </div>
