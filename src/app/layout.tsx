@@ -3,13 +3,14 @@ import "./globals.css";
 import StoreProvider from "./providers/StoreProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import SessionWrapper from "./providers/SessionWrapper";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import AuthProvider from "./providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import TopLoaderProvider from "./providers/TopLoaderProvider";
 import { initLogger } from "../logger";
 import ClientTrackersProvider from "./providers/ClientTrackersProvider";
+import Loading from "../components/ui/loading";
 
 const APP_NAME = "Saas template";
 const APP_DEFAULT_TITLE = "Saas template";
@@ -70,20 +71,26 @@ export default function Layout({ children }: RootLayoutProps) {
         <meta property="og:image:width" content="<generated>" />
         <meta property="og:image:height" content="<generated>" />
       </head>
-      <body className="!overscroll-none">
-        <StoreProvider>
-          <SessionWrapper>
-            <ThemeProvider>
-              <AuthProvider>
-                <TopLoaderProvider />
-                {children}
-                <ClientTrackersProvider />
-                <SpeedInsights />
-                <Analytics />
-              </AuthProvider>
-            </ThemeProvider>
-          </SessionWrapper>
-        </StoreProvider>
+      <body>
+        <Suspense
+          fallback={
+            <Loading spinnerClassName="absolute top-1/2 left-1/2 h-10 w-10" />
+          }
+        >
+          <StoreProvider>
+            <SessionWrapper>
+              <ThemeProvider>
+                <AuthProvider>
+                  <TopLoaderProvider />
+                  {children}
+                  <ClientTrackersProvider />
+                  <SpeedInsights />
+                  <Analytics />
+                </AuthProvider>
+              </ThemeProvider>
+            </SessionWrapper>
+          </StoreProvider>
+        </Suspense>
       </body>
     </html>
   );
