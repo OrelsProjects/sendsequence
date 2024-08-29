@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth/authOptions";
-import { captureOrder, createOrder } from "@/app/api/_utils/payments";
+import { captureOrder } from "@/app/api/_utils/payments";
 import prisma from "@/app/api/_db/db";
 
 export async function POST(
