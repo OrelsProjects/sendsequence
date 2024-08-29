@@ -1,9 +1,12 @@
 import axios from "axios";
 import {
   CreateSubscriptionPlan,
+  OnApproveData,
   PayPalCapture,
   PayPalCreate,
+  PayPalEventResponse,
   PayPalSubscription,
+  PayPalSubscriptionResource,
 } from "@/models/payment";
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID as string;
@@ -35,6 +38,23 @@ const generateAccessToken = async () => {
   }
 };
 
+/**
+ * The PayPal button onApprove callback data. Verify the request and return the data.
+ */
+export const verifyResponse = async (data: OnApproveData) => {
+  const accessToken = await generateAccessToken();
+  const url = `${PAYPAL_BASE_URL}/v2/checkout/orders/${data.orderID}`;
+
+  const response = await axios.get<PayPalCapture>(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response.data.status === "APPROVED";
+};
+
 export const verifyWebhookSignature = async (
   headers: Headers,
   body: any,
@@ -64,7 +84,23 @@ export const verifyWebhookSignature = async (
   return response.data.verification_status === "SUCCESS";
 };
 
-export const getOrder = async (orderId: string): Promise<PayPalCreate> => {
+export const getSubscription = async (subscriptionId: string) : Promise<PayPalSubscriptionResource> => {
+  const accessToken = await generateAccessToken();
+  const url = `${PAYPAL_BASE_URL}/v1/billing/subscriptions/${subscriptionId}`;
+
+  const response = await axios.get<PayPalSubscriptionResource>(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response.data;
+}
+
+export const getOrder = async (
+  orderId: string,
+): Promise<PayPalCapture> => {
   const accessToken = await generateAccessToken();
   const url = `${PAYPAL_BASE_URL}/v2/checkout/orders/${orderId}`;
 

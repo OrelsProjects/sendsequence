@@ -4,6 +4,7 @@ import { PayPalButtons } from "@paypal/react-paypal-js";
 import React, { useEffect } from "react";
 import usePayments from "@/lib/hooks/usePayments";
 import {
+  OnApproveData,
   PayPalCapture,
   PayPalSubscription,
   PayPalSubscriptionPlan,
@@ -18,7 +19,7 @@ export default function PaymentPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [plans, setPlans] = React.useState<PayPalSubscriptionPlan[]>([]);
   const [loadingPlans, setLoadingPlans] = React.useState<boolean>(false);
-  const { approveOrder, cancelOrder, createOrder, createSubscription } =
+  const { approveOrder, cancelOrder, createOrder, approveSubscription } =
     usePayments();
 
   const getPlans = async () => {
@@ -42,39 +43,29 @@ export default function PaymentPage() {
     getPlans();
   }, []);
 
-  /* Write your own logic for handling errors */
   useEffect(() => {
     toast.error(error);
   }, [error]);
 
   const handleApproveOrder = async (
-    data: any,
+    data: OnApproveData,
     actions: any,
-    orderData: PayPalCapture,
+    orderData: PayPalCapture | null,
   ) => {
-    const errorDetail = orderData?.details?.[0];
-    debugger;
-    if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
-      return actions.restart();
-    } else if (errorDetail?.issue === "PAYER_CANNOT_PAY") {
-      throw new Error("Payer cannot pay");
-    } else if (errorDetail) {
-      throw new Error(`${errorDetail.description} (${orderData.debug_id})`);
+    if (data.subscriptionID) {
+      await approveSubscription(data);
     } else {
-      const transaction = orderData.purchase_units[0].payments.captures[0];
-      console.log(
-        "Capture result",
-        orderData,
-        JSON.stringify(orderData, null, 2),
-      );
+      const errorDetail = orderData?.details?.[0];
+      if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
+        return actions.restart();
+      } else if (errorDetail?.issue === "PAYER_CANNOT_PAY") {
+        throw new Error("Payer cannot pay");
+      } else if (errorDetail) {
+        throw new Error(`${errorDetail.description} (${orderData.debug_id})`);
+      }
+      // Handle successful order
     }
   };
-
-  const handleCreate = async () =>
-    await createOrder("669935d4f30a2a6dacb06fdf", 10);
-
-  const handleCreateSubscription = async () =>
-    await createSubscription("669935d4f30a2a6dacb06fdf");
 
   return (
     <div className="flex flex-col gap-5">
@@ -91,68 +82,24 @@ export default function PaymentPage() {
             plan_id: "P-4PY750167K1027154M3HPVYQ",
           });
         }}
-        onApprove={async (data, actions) => {
-          debugger;
-          alert("Order approved");
+        onApprove={async (data: OnApproveData, actions) => {
           setError(null);
-          const orderData = await approveOrder(data.orderID);
+          let orderData = null;
+          if (!data.subscriptionID) {
+            orderData = await approveOrder(data.orderID);
+          }
           await handleApproveOrder(data, actions, orderData);
         }}
-        onError={(err: any) => {
-          debugger;
-          setError(err.message);
-        }}
-        onCancel={async data => {
-          debugger;
-          setError(null);
-          await cancelOrder(data.orderID as string);
-        }}
+        // onError={(err: any) => {
+        //   setError(err.message);
+        // }}
+        // onCancel={async data => {
+        //   // if (data.orderID) {
+        //   //   await cancelOrder(data.orderID as string);
+        //   // }
+        //   // setError(null);
+        // }}
       />
-
-      {/* <GooglePayButton
-        className="w-96 mb-1.5"
-        environment="TEST"
-        buttonColor="black"
-        buttonType="buy"
-        buttonRadius={9999}
-        buttonSizeMode="fill"
-        paymentRequest={{
-          apiVersion: 2,
-          apiVersionMinor: 0,
-          allowedPaymentMethods: [
-            {
-              type: "CARD",
-              parameters: {
-                allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-                allowedCardNetworks: ["MASTERCARD", "VISA"],
-              },
-              tokenizationSpecification: {
-                type: "PAYMENT_GATEWAY",
-                parameters: {
-                  gateway: "example",
-                  gatewayMerchantId: "exampleGatewayMerchantId",
-                },
-              },
-            },
-          ],
-          merchantInfo: {
-            merchantId: "12345678901234567890",
-            merchantName: "Demo Merchant",
-          },
-          transactionInfo: {
-            totalPriceStatus: "FINAL",
-            totalPriceLabel: "Total",
-            totalPrice: "1.00",
-            currencyCode: "USD",
-            countryCode: "US",
-          },
-          callbackIntents: ["PAYMENT_AUTHORIZATION"],
-        }}
-        onLoadPaymentData={paymentRequest => {
-          console.log("Success", paymentRequest);
-        }}
-        onPaymentAuthorized={paymentData => ({ transactionState: "SUCCESS" })}
-      /> */}
       <div className="flex flex-col gap-5">
         <span className="text-xl text-destructive">{error}</span>
       </div>

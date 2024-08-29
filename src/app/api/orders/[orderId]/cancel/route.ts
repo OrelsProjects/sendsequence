@@ -3,6 +3,7 @@ import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth/authOptions";
 import prisma from "@/app/api/_db/db";
+import { getOrder } from "../../../_utils/payments";
 
 export async function POST(
   req: NextRequest,
@@ -13,12 +14,14 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
+    const order = await getOrder(params.orderId);
+
     await prisma.userOrders.update({
       where: {
         orderId: params.orderId,
       },
       data: {
-        status: "CANCELLED",
+        status: order.status === "APPROVED" ? order.status : "CANCELLED",
       },
     });
 

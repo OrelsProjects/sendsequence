@@ -276,3 +276,13 @@ export interface PayPalSaleResource {
   state: string;
   invoice_number: string;
 }
+
+export type OnApproveData = {
+  billingToken?: string | null;
+  facilitatorAccessToken?: string;
+  orderID: string;
+  payerID?: string | null;
+  paymentID?: string | null;
+  subscriptionID?: string | null;
+  authCode?: string | null;
+};

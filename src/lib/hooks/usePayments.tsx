@@ -1,5 +1,10 @@
 import axios from "axios";
-import { CreateSubscriptionPlan, PayPalCapture } from "../../models/payment";
+import {
+  CreateSubscriptionPlan,
+  OnApproveData,
+  PayPalCapture,
+} from "../../models/payment";
+import { Logger } from "../../logger";
 
 export default function usePayments() {
   // api/subscription/create
@@ -20,18 +25,15 @@ export default function usePayments() {
 
         throw new Error(errorMessage);
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      Logger.error("Error creating subscription plan", { error });
+      throw error;
     }
   };
 
-  const createSubscription = async (itemId: string) => {
+  const approveSubscription = async (data: OnApproveData) => {
     try {
-      const result = await axios.post("/api/subscription", {
-        cart: {
-          itemId,
-        },
-      });
+      const result = await axios.post("/api/subscription/approve", { data });
       const subscriptionData = result.data;
 
       if (subscriptionData.id) {
@@ -44,8 +46,9 @@ export default function usePayments() {
 
         throw new Error(errorMessage);
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      Logger.error("Error approving subscription", { error });
+      throw error;
     }
   };
 
@@ -69,8 +72,8 @@ export default function usePayments() {
 
         throw new Error(errorMessage);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      Logger.error("Error creating order", { error });
       console.error(error);
     }
   };
@@ -81,21 +84,26 @@ export default function usePayments() {
         `/api/orders/${orderId}/capture`,
       );
       return response.data;
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      Logger.error("Error approving order", { error });
       throw error;
     }
   };
 
   const cancelOrder = async (orderId: string) => {
-    await axios.post(`/api/orders/${orderId}/cancel`);
+    try {
+      await axios.post(`/api/orders/${orderId}/cancel`);
+    } catch (error: any) {
+      Logger.error("Error cancelling order", { error });
+      throw error;
+    }
   };
 
   return {
     approveOrder,
     cancelOrder,
     createOrder,
-    createSubscription,
+    approveSubscription,
     createSubscriptionPlan,
   };
 }

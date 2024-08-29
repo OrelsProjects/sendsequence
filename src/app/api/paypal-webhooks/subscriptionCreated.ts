@@ -3,10 +3,33 @@ import prisma from "@/app/api/_db/db";
 import Logger from "@/loggerServer";
 import { PayPalEventResponse } from "../../../models/payment";
 
-export async function handleSubscriptionCreated(event: PayPalEventResponse) {
+export async function handleSubscriptionCreated(
+  event: PayPalEventResponse,
+): Promise<NextResponse>;
+export async function handleSubscriptionCreated(data: {
+  planId: string;
+  subscriptionId: string;
+  startDate: Date;
+  status: string;
+}): Promise<NextResponse>;
+
+export async function handleSubscriptionCreated(data: any) {
   try {
+    let planId = data.planId;
+    let subscriptionId = data.subscriptionId;
+    let startDate = data.startDate;
+    let status = data.status;
+
+    // check if the data is coming from the webhook event (PayPalEventResponse)
+    if (data.id) {
+      planId = data.resource.plan_id;
+      subscriptionId = data.resource.id;
+      startDate = new Date(data.resource.start_time);
+      status = data.resource.status;
+    }
+
     const existingSubscription = await prisma.subscription.findFirst({
-      where: { subscriptionId: event.resource.id },
+      where: { subscriptionId },
     });
 
     if (existingSubscription) {
@@ -18,10 +41,10 @@ export async function handleSubscriptionCreated(event: PayPalEventResponse) {
 
     const subscription = await prisma.subscription.create({
       data: {
-        planId: event.resource.plan_id,
-        subscriptionId: event.resource.id,
-        startDate: new Date(event.resource.start_time),
-        status: event.resource.status,
+        planId,
+        subscriptionId,
+        startDate,
+        status,
       },
     });
     return NextResponse.json(
