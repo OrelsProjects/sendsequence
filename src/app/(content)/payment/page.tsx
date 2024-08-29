@@ -87,14 +87,10 @@ export default function PaymentPage() {
           height: 40,
         }}
         createSubscription={async (data, actions) => {
-          // Create a one-time product (Recurring payment) -> Create a subscription plan -> Create a subscription
           return actions.subscription.create({
             plan_id: "P-4PY750167K1027154M3HPVYQ",
           });
         }}
-        // createOrder={async () => {
-        //   return await handleCreate();
-        // }}
         onApprove={async (data, actions) => {
           debugger;
           alert("Order approved");

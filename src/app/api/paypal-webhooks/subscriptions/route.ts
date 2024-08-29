@@ -9,6 +9,7 @@ import { handlePaymentSaleCompleted } from "../paymentSaleCompleted";
 import { handleSubscriptionActivated } from "../subscriptionActivated";
 import { handleSubscriptionCancelled } from "../subscriptionCancelled";
 import { handleSubscriptionSuspended } from "../subscriptionSuspended";
+import { verifyWebhookSignature } from "../../_utils/payments";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,6 +18,17 @@ export async function POST(req: NextRequest) {
     Logger.info("Received webhook event", "system-webhook", {
       data: { eventType, event },
     });
+
+    const isHookVerified = await verifyWebhookSignature(req.headers, event);
+    if (!isHookVerified) {
+      Logger.error("Webhook signature verification failed", "system-webhook", {
+        data: { event },
+      });
+      return NextResponse.json(
+        { error: "Webhook signature verification failed" },
+        { status: 401 },
+      );
+    }
 
     switch (eventType) {
       case "BILLING.SUBSCRIPTION.CREATED":

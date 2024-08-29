@@ -35,6 +35,35 @@ const generateAccessToken = async () => {
   }
 };
 
+export const verifyWebhookSignature = async (
+  headers: Headers,
+  body: any,
+): Promise<boolean> => {
+  const accessToken = await generateAccessToken();
+  const url = `${PAYPAL_BASE_URL}/v1/notifications/verify-webhook-signature`;
+
+  const headersValues = Object.fromEntries(headers.entries());
+
+  const requestBody = {
+    auth_algo: headersValues["paypal-auth-algo"],
+    cert_url: headersValues["paypal-cert-url"],
+    transmission_id: headersValues["paypal-transmission-id"],
+    transmission_sig: headersValues["paypal-transmission-sig"],
+    transmission_time: headersValues["paypal-transmission-time"],
+    webhook_id: process.env.PAYPAL_WEBHOOK_ID,
+    webhook_event: body,
+  };
+
+  const response = await axios.post(url, requestBody, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response.data.verification_status === "SUCCESS";
+};
+
 export const getOrder = async (orderId: string): Promise<PayPalCreate> => {
   const accessToken = await generateAccessToken();
   const url = `${PAYPAL_BASE_URL}/v2/checkout/orders/${orderId}`;
