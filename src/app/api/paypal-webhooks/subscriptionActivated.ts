@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import prisma from "@/app/api/_db/db";
-import Logger from "@/loggerServer";
+import prisma from "../_db/db";
+import Logger from "../../../loggerServer";
 import { PayPalEventResponse } from "../../../models/payment";
 import { handleSubscriptionCreated } from "./subscriptionCreated";
 

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import Logger from "@/loggerServer";
+import Logger from "../../../../loggerServer";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth/authOptions";
-import { OnApproveData, PayPalCapture } from "@/models/payment";
+import { authOptions } from "../../../../auth/authOptions";
+import { OnApproveData, PayPalCapture } from "../../../../models/payment";
 import {
   getOrder,
   getSubscription,

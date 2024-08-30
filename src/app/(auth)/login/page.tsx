@@ -1,9 +1,9 @@
 "use client";
 
-import GoogleLogin from "@/components/auth/googleLogin";
-import AppleLogin from "@/components/auth/appleLogin";
-import { Button } from "@/components/ui/button";
-import CustomLink from "@/components/customLink";
+import GoogleLogin from "../../../components/auth/googleLogin";
+import AppleLogin from "../../../components/auth/appleLogin";
+import { Button } from "../../../components/ui/button";
+import CustomLink from "../../../components/customLink";
 
 const Auth = () => {
   return (

@@ -4,11 +4,15 @@ import {
   MdOutlinePayments as Payments,
   MdPayment as PaymentsActive,
 } from "react-icons/md";
+import {
+  MdOutlineWorkspacePremium as Plans,
+  MdWorkspacePremium as PlansActive,
+} from "react-icons/md";
 
 export interface NavigationBarItem {
   icon: ElementType;
   iconActive: ElementType;
-  label: "Home" | "Payment";
+  label: "Home" | "Payment" | "Plans";
   href: string;
 }
 
@@ -27,5 +31,11 @@ export const BottomBarItems: NavigationBarItem[] = [
     iconActive: () => <PaymentsActive className={classNameActive} />,
     label: "Payment",
     href: "/payment",
+  },
+  {
+    icon: () => <Plans className={className} />,
+    iconActive: () => <PlansActive className={classNameActive} />,
+    label: "Plans",
+    href: "/plans",
   },
 ];

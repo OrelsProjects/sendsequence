@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import Logger from "@/loggerServer";
+import Logger from "../../../../../loggerServer";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth/authOptions";
-import { captureOrder } from "@/app/api/_utils/payments";
-import prisma from "@/app/api/_db/db";
+import { authOptions } from "../../../../../auth/authOptions";
+import { captureOrder } from "../../../_utils/payments";
+import prisma from "../../../_db/db";
 
 export async function POST(
   req: NextRequest,

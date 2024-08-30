@@ -2,11 +2,11 @@
 // pages/CreateSubscriptionPlan.tsx
 import React from "react";
 import { useFormik } from "formik";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "../../../../components/ui/button";
+import { Input } from "../../../../components/ui/input";
+import { Textarea } from "../../../../components/ui/textarea";
 import { CiCircleRemove } from "react-icons/ci";
-import { CreateSubscriptionPlan, BillingCycle } from "@/models/payment"; // Assuming interfaces are defined and exported
+import { CreateSubscriptionPlan, BillingCycle } from "../../../../models/payment"; // Assuming interfaces are defined and exported
 import usePayments from "../../../../lib/hooks/usePayments";
 import { toast } from "react-toastify";
 

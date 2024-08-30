@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
-import { Button } from "@/components/ui/button";
-import useAuth from "@/lib/hooks/useAuth";
+import { useAppDispatch, useAppSelector } from "../../../lib/hooks/redux";
+import { Button } from "../../../components/ui/button";
+import useAuth from "../../../lib/hooks/useAuth";
 import { toast } from "react-toastify";
-import { EventTracker } from "@/eventTracker";
-import { Switch } from "@/components/ui/switch";
+import { EventTracker } from "../../../eventTracker";
+import { Switch } from "../../../components/ui/switch";
 import axios from "axios";
-import { canUseNotifications } from "@/lib/utils/notificationUtils";
-import useNotification from "@/lib/hooks/useNotification";
-import { updateUserSettings } from "@/lib/features/auth/authSlice";
-import { ThemeToggle } from "@/components/themeToggle";
-import Divider from "@/components/ui/divider";
-import CustomLink from "@/components/customLink";
+import { canUseNotifications } from "../../../lib/utils/notificationUtils";
+import useNotification from "../../../lib/hooks/useNotification";
+import { updateUserSettings } from "../../../lib/features/auth/authSlice";
+import { ThemeToggle } from "../../../components/themeToggle";
+import Divider from "../../../components/ui/divider";
+import CustomLink from "../../../components/customLink";
 
 interface SettingsProps {}
 
@@ -114,7 +114,6 @@ const SettingsScreen: React.FC<SettingsProps> = () => {
             <div className="pl-2">
               {isNotificationsGranted ? (
                 <Switch
-                  className="w-10"
                   onCheckedChange={updateNotificationSettings}
                   checked={settings.showNotifications}
                 />

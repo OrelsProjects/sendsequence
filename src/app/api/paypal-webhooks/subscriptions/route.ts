@@ -1,8 +1,8 @@
 // pages/api/paypal-webhooks.ts
 
 import { NextRequest, NextResponse } from "next/server";
-import Logger from "@/loggerServer";
-import { PayPalEventResponse } from "@/models/payment";
+import Logger from "../../../../loggerServer";
+import { PayPalEventResponse } from "../../../../models/payment";
 import { handleSubscriptionCreated } from "../subscriptionCreated";
 import { handlePaymentFailed } from "../paymentFailed";
 import { handlePaymentSaleCompleted } from "../paymentSaleCompleted";

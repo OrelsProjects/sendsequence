@@ -2,7 +2,7 @@
 
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import React, { useEffect } from "react";
-import usePayments from "@/lib/hooks/usePayments";
+import usePayments from "../../../lib/hooks/usePayments";
 import {
   OnApproveData,
   PayPalCapture,

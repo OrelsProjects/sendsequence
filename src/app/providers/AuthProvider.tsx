@@ -8,7 +8,7 @@ import {
   setUser as setUserAction,
 } from "../../lib/features/auth/authSlice";
 import { usePathname } from "next/navigation";
-import Loading from "@/components/ui/loading";
+import Loading from "../../components/ui/loading";
 import { setUserEventTracker } from "../../eventTracker";
 import { setUserLogger } from "../../logger";
 import { useSession } from "next-auth/react";
@@ -82,10 +82,9 @@ export default function AuthProvider({
       if (
         pathname.includes("login") ||
         pathname.includes("register") ||
-        pathname === "/" ||
-        pathname === "/home"
+        pathname === "/"
       ) {
-        router.push("/home", { preserveQuery: true });
+        router.push("/plans", { preserveQuery: true });
       }
     } else {
       if (!pathname.includes("login") && !pathname.includes("register")) {

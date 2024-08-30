@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import prisma from "@/app/api/_db/db";
-import Logger from "@/loggerServer";
-import { PayPalSaleCompletedEvent } from "@/models/payment";
+import prisma from "../_db/db";
+import Logger from "../../../loggerServer";
+import { PayPalSaleCompletedEvent } from "../../../models/payment";
 
 export async function handlePaymentSaleCompleted(
   event: PayPalSaleCompletedEvent,

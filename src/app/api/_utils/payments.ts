@@ -7,7 +7,7 @@ import {
   PayPalEventResponse,
   PayPalSubscription,
   PayPalSubscriptionResource,
-} from "@/models/payment";
+} from "../../../models/payment";
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID as string;
 const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_SECRET as string;
