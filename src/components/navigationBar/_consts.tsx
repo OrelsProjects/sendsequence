@@ -12,7 +12,7 @@ import {
 export interface NavigationBarItem {
   icon: ElementType;
   iconActive: ElementType;
-  label: "Home" | "Payment" | "Plans";
+  label: "Home" | "Payment" | "Premium";
   href: string;
 }
 
@@ -35,7 +35,7 @@ export const BottomBarItems: NavigationBarItem[] = [
   {
     icon: () => <Plans className={className} />,
     iconActive: () => <PlansActive className={classNameActive} />,
-    label: "Plans",
-    href: "/plans",
+    label: "Premium",
+    href: "/pricing",
   },
 ];

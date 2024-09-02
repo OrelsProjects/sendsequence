@@ -4,10 +4,9 @@ import {
   OnApproveData,
   PayPalCapture,
   PayPalCreate,
-  PayPalEventResponse,
-  PayPalSubscription,
+  PayPalSubscriptionPlan,
   PayPalSubscriptionResource,
-} from "../../../models/payment";
+} from "@/models/payment";
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID as string;
 const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_SECRET as string;
@@ -98,6 +97,20 @@ export const getSubscription = async (subscriptionId: string) : Promise<PayPalSu
   return response.data;
 }
 
+export const getSubscriptionPlan = async (planId: string) : Promise<PayPalCreate> => {
+  const accessToken = await generateAccessToken();
+  const url = `${PAYPAL_BASE_URL}/v1/billing/plans/${planId}`;
+
+  const response = await axios.get<PayPalCreate>(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response.data;
+}
+
 export const getOrder = async (
   orderId: string,
 ): Promise<PayPalCapture> => {
@@ -139,7 +152,7 @@ export const createSubscriptionPlan = async (
   return response.data;
 };
 
-export const listSubscriptionPlans = async (): Promise<PayPalSubscription> => {
+export const listSubscriptionPlans = async (): Promise<PayPalSubscriptionPlan[]> => {
   const accessToken = await generateAccessToken();
   const url = `${PAYPAL_BASE_URL}/v1/billing/plans?sort_by=create_time&sort_order=desc`;
 

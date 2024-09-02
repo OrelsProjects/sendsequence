@@ -14,19 +14,18 @@ interface PlanItem {
 }
 
 export interface PricePlan {
+  id: string;
   price: number;
-  items?: PlanItem[];
-  secondaryPrice?: number;
   interval: Interval;
-  secondaryInterval?: Interval;
-  recommended?: boolean;
   discount?: number; // Percentage 1-100 off
 }
 
 export interface PlanProps {
   planName: string;
-  pricePlan: PricePlan;
+  pricePlanPrimary: PricePlan;
+  pricePlanSecondary?: PricePlan;
   items: PlanItem[];
+  recommended?: boolean;
   className?: string;
   onClick: (planId: string) => void;
 }
@@ -61,13 +60,14 @@ const ContentContainer = ({
 
     <div
       className={cn(
-        "h-full w-full rounded-lg absolute bottom-0 left-0 z-20 p-[1px] pt-10",
+        "h-full w-full rounded-lg absolute bottom-0 left-0 z-20 p-[0px] pt-10",
       )}
     >
       <div
         className={cn(
-          "w-full h-full rounded-md flex flex-col gap-2",
+          "w-full h-full rounded-b-md flex flex-col gap-2",
           "bg-gradient-to-b from-card to-background border border-muted-foreground/20 dark:border-card",
+          { "rounded-t-md": !recommended },
         )}
       >
         {children}
@@ -88,7 +88,7 @@ export function Tag({
       className={cn(
         "w-fit h-fit flex flex-row items-center justify-start gap-2 px-4 py-1 rounded-full border",
         {
-          "border-primary bg-primary/20 dark:bg-primary-darker/70 text-primary font-medium":
+          "border-primary bg-primary/20 dark:bg-primary/20 text-primary font-medium":
             recommended,
           "border-foreground/20 bg-muted-foreground/10 dark:bg-muted-foreground/40 text-foreground/80 dark:text-foreground/90":
             !recommended,
@@ -132,24 +132,30 @@ function Items({
 export default function Plan({
   planName,
   items,
-  pricePlan,
+  pricePlanPrimary: pricePlanPrimary,
+  pricePlanSecondary: pricePlanSecondary,
+  recommended,
   className,
   onClick,
 }: PlanProps) {
-  const [intervalSelected, setIntervalSelected] = useState(pricePlan.interval);
+  const [selectedPlan, setSelectedPlan] = useState(pricePlanPrimary);
 
-  const handleIntervalChange = () => {
-    if (!pricePlan.secondaryInterval) return;
+  const handlePlanChange = () => {
+    if (!pricePlanSecondary) return;
 
-    if (pricePlan.secondaryInterval === intervalSelected) {
-      setIntervalSelected(pricePlan.interval);
+    if (selectedPlan.id === pricePlanPrimary.id) {
+      setSelectedPlan(pricePlanSecondary);
     } else {
-      setIntervalSelected(pricePlan.secondaryInterval);
+      setSelectedPlan(pricePlanPrimary);
     }
   };
 
+  const selectedInterval = useMemo(() => {
+    return selectedPlan.interval;
+  }, [selectedPlan]);
+
   const intervalText = useMemo(() => {
-    switch (intervalSelected) {
+    switch (selectedInterval) {
       case "month":
         return "per month";
       case "year":
@@ -159,10 +165,10 @@ export default function Plan({
       default:
         return "";
     }
-  }, [intervalSelected]);
+  }, [selectedInterval]);
 
   const switchIntervalText = useMemo(() => {
-    switch (intervalSelected) {
+    switch (selectedInterval) {
       case "month":
         return "monthly";
       case "year":
@@ -170,32 +176,27 @@ export default function Plan({
       default:
         return "";
     }
-  }, [intervalSelected]);
+  }, [selectedInterval]);
 
   const price = useMemo(() => {
-    if (intervalSelected === pricePlan.interval) {
-      return pricePlan.price;
-    }
-    if (intervalSelected === pricePlan.secondaryInterval) {
-      return pricePlan.secondaryPrice;
-    }
-    return pricePlan.price;
-  }, [intervalSelected, pricePlan]);
+    const discount = selectedPlan.discount || 0;
+    return selectedPlan.price - (selectedPlan.price * discount) / 100;
+  }, [selectedPlan]);
 
   return (
-    <ContentContainer className={className} recommended={pricePlan.recommended}>
+    <ContentContainer className={className} recommended={recommended}>
       <div className="w-full h-full flex flex-col p-4 gap-6">
         <div className="w-full h-fit flex flex-row justify-between items-center relative">
-          <Tag recommended={pricePlan.recommended}>
+          <Tag recommended={recommended}>
             <span className="text-sm">{planName}</span>
           </Tag>
-          {pricePlan.secondaryInterval && (
+          {pricePlanSecondary && (
             <Switch
-              checked={intervalSelected === pricePlan.interval}
-              onCheckedChange={handleIntervalChange}
+              checked={selectedPlan.id === pricePlanPrimary.id}
+              onCheckedChange={handlePlanChange}
               className={cn({
-                "data-[state=checked]:!bg-muted-foreground data-[state=unchecked]:!bg-muted-foreground/20":
-                  !pricePlan.recommended,
+                "w-12 data-[state=checked]:!bg-muted-foreground data-[state=unchecked]:!bg-muted-foreground/20":
+                  recommended,
               })}
             >
               <span className="w-fit text-xs text-muted-foreground/70 text-center absolute -bottom-3">
@@ -212,22 +213,22 @@ export default function Plan({
             </span>
           </div>
           <Divider />
-          <Items items={items} recommended={pricePlan.recommended} />
+          <Items items={items} recommended={recommended} />
           <div className="w-full h-full flex flex-row items-center justify-between">
             <Button
               className={cn(
                 "w-full self-end",
                 {
                   "border-muted-foreground/30 dark:border-card bg-card dark:bg-background":
-                    !pricePlan.recommended,
+                    !recommended,
                 },
                 {
                   "bg-gradient-to-t from-primary via-primary to-background/20 dark:to-foreground/20":
-                    pricePlan.recommended,
+                    recommended,
                 },
               )}
               onClick={() => onClick(planName)}
-              variant={pricePlan.recommended ? "default" : "outline"}
+              variant={recommended ? "default" : "outline"}
             >
               Select
             </Button>

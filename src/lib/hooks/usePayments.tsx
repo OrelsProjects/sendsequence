@@ -3,8 +3,9 @@ import {
   CreateSubscriptionPlan,
   OnApproveData,
   PayPalCapture,
-} from "../../models/payment";
-import { Logger } from "../../logger";
+  SubscriptionId,
+} from "@/models/payment";
+import { Logger } from "@/logger";
 
 export default function usePayments() {
   // api/subscription/create
@@ -31,7 +32,9 @@ export default function usePayments() {
     }
   };
 
-  const approveSubscription = async (data: OnApproveData) => {
+  const approveSubscription = async (
+    data: OnApproveData,
+  ): Promise<SubscriptionId> => {
     try {
       const result = await axios.post("/api/subscription/approve", { data });
       const subscriptionData = result.data;

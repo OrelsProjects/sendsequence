@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import Logger from "../../../../loggerServer";
+import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../../../auth/authOptions";
-import { OnApproveData, PayPalCapture } from "../../../../models/payment";
-import {
-  getOrder,
-  getSubscription,
-  verifyResponse,
-} from "../../_utils/payments";
+import { authOptions } from "@/auth/authOptions";
+import { OnApproveData } from "@/models/payment";
+import { getSubscription, verifyResponse } from "@/app/api/_utils/payments";
 import { handleSubscriptionCreated } from "../../paypal-webhooks/subscriptionCreated";
 import { handleSubscriptionActivated } from "../../paypal-webhooks/subscriptionActivated";
 
@@ -32,13 +28,18 @@ export async function POST(req: NextRequest) {
     if (data.subscriptionID) {
       const subscriptionData = await getSubscription(data.subscriptionID);
 
-      await handleSubscriptionCreated({
+      const responseCreate = await handleSubscriptionCreated({
         status: subscriptionData.status,
         subscriptionId: data.subscriptionID,
         startDate: new Date(subscriptionData.start_time),
         planId: subscriptionData.plan_id,
       });
-      await handleSubscriptionActivated({
+
+      if (responseCreate.status !== 200) {
+        return responseCreate;
+      }
+
+      const responseActivate = await handleSubscriptionActivated({
         subscriptionId: data.subscriptionID,
         email_address: subscriptionData.subscriber.email_address,
         nextBillingDate: new Date(
@@ -54,9 +55,17 @@ export async function POST(req: NextRequest) {
         startDate: new Date(subscriptionData.start_time),
         status: subscriptionData.status,
       });
+      if (responseActivate.status !== 200) {
+        return responseActivate;
+      }
     }
 
-    return NextResponse.json({}, { status: 200 });
+    return NextResponse.json(
+      {
+        id: data.subscriptionID,
+      },
+      { status: 200 },
+    );
   } catch (error) {
     Logger.error("Error sending notification", session.user.userId, {
       data: { error },

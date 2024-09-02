@@ -1,3 +1,6 @@
+export type SubscriptionId = string;
+export type PlanId = string;
+
 export interface PayPalLink {
   href: string;
   rel: string;
@@ -223,7 +226,7 @@ export interface BillingInfo {
   last_payment: PaymentDetail; // Last payment made
   next_billing_time: string;
   final_payment_time: string; // Time of the final payment
-  failed_payments_count: number; 
+  failed_payments_count: number;
 }
 
 export interface CycleExecution {
