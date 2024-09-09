@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import prisma from "../_db/db";
-import Logger from "../../../loggerServer";
-import { PayPalSaleCompletedEvent } from "../../../models/payment";
+import prisma from "@/app/api/_db/db";
+import Logger from "@/loggerServer";
+import { PayPalSaleCompletedEvent } from "@/models/payment";
 
 export async function handlePaymentSaleCompleted(
   event: PayPalSaleCompletedEvent,
@@ -27,6 +27,7 @@ export async function handlePaymentSaleCompleted(
         paymentDate: new Date(event.resource.create_time),
       },
     });
+
     return NextResponse.json(
       { message: "Payment processed successfully", payment },
       { status: 200 },

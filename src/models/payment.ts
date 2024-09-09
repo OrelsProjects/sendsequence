@@ -1,22 +1,35 @@
 export type SubscriptionId = string;
 export type PlanId = string;
 
+export interface SubscriptionPlans {
+  monthly: PayPalSubscriptionPlan;
+  yearly: PayPalSubscriptionPlan;
+}
+
 export interface PayPalLink {
   href: string;
   rel: string;
   method: string;
 }
 
-export interface PayPalSubscription {
-  links: PayPalLink[];
-  plans: PayPalSubscriptionPlan[];
+export interface CreateSubscriptionBody {
+  planId: string;
+  subscriptionId: string;
+  startDate: Date;
+  status: string;
 }
 
 export interface PayPalSubscriptionPlan extends PayPalCreate {
   name: string;
   description?: string;
   create_time: string;
+  update_time: string;
   usage_type: "LICENSED" | "UNLIMITED";
+  billing_cycles: BillingCycle[];
+  payment_preferences: PaymentPreferences;
+  taxes?: Taxes;
+  quantity_supported: boolean;
+  product_id: string;
 }
 
 export interface PayPalCreate {
@@ -28,6 +41,7 @@ export interface PayPalCreate {
 export interface PayPalCapture {
   id: string;
   status: string;
+  create_time: string;
   debug_id?: string;
   details?: {
     issue: string;
@@ -187,7 +201,7 @@ export interface PayPalSubscriptionResource {
   };
   start_time: string;
   update_time: string;
-  billing_info: BillingInfo;
+  billing_info?: BillingInfo;
   links: PayPalLink[];
   id: string;
   plan_id: string;
@@ -215,6 +229,7 @@ export interface PayPalSubscriber {
       country_code: string;
     };
   };
+  payer_id?: string | null;
 }
 
 export interface BillingInfo {
@@ -289,3 +304,10 @@ export type OnApproveData = {
   subscriptionID?: string | null;
   authCode?: string | null;
 };
+
+export enum PayPalPaymentStatus {
+  APPROVAL_PENDING = "APPROVAL_PENDING",
+  COMPLETED = "COMPLETED",
+  ACTIVATE = "ACTIVATE",
+  CANCELLED = "CANCELLED",
+}

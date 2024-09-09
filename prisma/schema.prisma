@@ -35,6 +35,8 @@ model AppUserMetadata {
   referralCode      String?
   referredBy        String?
 
+  paidStatus String? // "free" | "premium"
+
   pushToken       String?
   pushTokenMobile String?
 
@@ -83,10 +85,10 @@ model UserOrders {
 }
 
 model Subscription {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
   userId            String?
   planId            String
-  subscriptionId        String   @unique
+  subscriptionId    String    @unique
   startDate         DateTime
   status            String
   nextBillingDate   DateTime?
