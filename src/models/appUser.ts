@@ -14,3 +14,9 @@ export interface AppUserMetadata {
 export interface AppUserSettings {
   showNotifications: boolean;
 }
+
+export enum UserPaidStatusEnum {
+  Premium = "premium",
+  Free = "free",
+  Suspended = "suspended",
+}

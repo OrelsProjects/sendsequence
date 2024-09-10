@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Logger from "@/loggerServer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth/authOptions";
-import { getSubscriptionPlan } from "../../_utils/payments";
+import { getSubscriptionPlan } from "@/app/api/_utils/payments";
 
 export async function GET(
   req: NextRequest,
